@@ -2,6 +2,7 @@ import 'package:autopulse/resources/colors.dart';
 import 'package:autopulse/resources/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'dart:ui' as ui;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -37,6 +38,11 @@ class HomeScreen extends StatelessWidget {
                           height: 34,
                         ),
                       ),
+                    ),
+                    const Spacer(),
+                    const Text(
+                      "Home",
+                      style: AppFonts.appBarText,
                     ),
                     const Spacer(),
                     Container(
@@ -77,22 +83,36 @@ class HomeScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                           color: AppColors.widgetsColors,
                         ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
                               vertical: 15, horizontal: 10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Mileage",
                                 style: AppFonts.widgetTitle,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Center(
                                 child: Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    SizedBox(
+                                    ClipOval(
+                                      child: BackdropFilter(
+                                        filter: ui.ImageFilter.blur(
+                                            sigmaX: 10, sigmaY: 10),
+                                        child: Container(
+                                          width: 180,
+                                          height: 180,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.widgetsColors
+                                                .withOpacity(0.1),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
                                       height: 145,
                                       width: 145,
                                       child: CircularProgressIndicator(
@@ -104,15 +124,15 @@ class HomeScreen extends StatelessWidget {
                                         backgroundColor: Colors.white12,
                                       ),
                                     ),
-                                    Text(
+                                    const Text(
                                       '3000 mi',
                                       style: AppFonts.milesText,
                                     ),
                                   ],
                                 ),
                               ),
-                              Spacer(),
-                              Text(
+                              const Spacer(),
+                              const Text(
                                 "Since last service",
                                 style: AppFonts.widgetSubtitle,
                               ),

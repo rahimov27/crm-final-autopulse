@@ -13,9 +13,21 @@ abstract class AppFonts {
     fontFamily: 'LufgaRegular.ttf',
   );
 
+  static const TextStyle appBarText = TextStyle(
+    fontSize: 18,
+    fontFamily: 'LufgaMedium.ttf',
+  );
+
   static const TextStyle milesText = TextStyle(
     fontSize: 16,
     color: Colors.white,
     fontFamily: 'LufgaRegular.ttf',
+  );
+
+  static const TextStyle chatText = TextStyle(
+    fontSize: 12,
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'Montserrat',
   );
 }

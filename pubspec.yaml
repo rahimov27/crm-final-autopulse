@@ -35,6 +35,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.10+1
+  animated_splash_screen: ^1.3.0
+  lottie: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -62,6 +64,7 @@ flutter:
     - assets/bottom-nav-icons/in-active/
     - assets/bottom-nav-icons/active/
     - assets/
+    - assets/Lottie/Splash_crm.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -80,7 +83,9 @@ flutter:
       fonts:
         - asset: fonts/LufgaMedium.ttf
         - asset: fonts/LufgaRegular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+    - family: Montserrat
+      fonts:
+        - asset: fonts/Montserrat/Montserrat-Regular.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

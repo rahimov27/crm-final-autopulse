@@ -1,5 +1,5 @@
 import 'package:autopulse/resources/colors.dart';
-import 'package:autopulse/ui/PagesScreen.dart';
+import 'package:autopulse/welcome_screens/SplashScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const PagesScreen(),
+      home: const SplashScreen(),
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.backgroundColor,
         primarySwatch: Colors.blue,
