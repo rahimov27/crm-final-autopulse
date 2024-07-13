@@ -6,4 +6,5 @@ abstract class AppColors {
   static const Color iconsBackgroundColor = Color(0xffD9D9D9);
   static const Color widgetsColors = Color(0xff242425);
   static const Color mainBlueColor = Color(0xff1463FF);
+  static const Color bottomNavigationBackground = Color(0xff242424);
 }

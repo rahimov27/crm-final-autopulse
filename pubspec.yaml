@@ -37,6 +37,14 @@ dependencies:
   flutter_svg: ^2.0.10+1
   animated_splash_screen: ^1.3.0
   lottie: ^3.1.0
+  latlong2: ^0.9.1
+  flutter_map: ^7.0.1
+  flutter_polyline_points: ^2.1.0
+  google_maps_flutter: ^2.7.0
+  location: ^7.0.0
+  http: ^1.2.1
+  dio: ^5.5.0+1
+  
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +71,7 @@ flutter:
   assets:
     - assets/bottom-nav-icons/in-active/
     - assets/bottom-nav-icons/active/
+    - assets/profile_icons/
     - assets/
     - assets/Lottie/Splash_crm.json
   #   - images/a_dot_ham.jpeg

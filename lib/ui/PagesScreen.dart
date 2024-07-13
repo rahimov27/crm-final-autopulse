@@ -1,5 +1,5 @@
 // ignore_for_file: deprecated_member_use
-
+import 'package:autopulse/resources/colors.dart';
 import 'package:autopulse/ui/ChatScreen.dart';
 import 'package:autopulse/ui/Homescreen.dart';
 import 'package:autopulse/ui/MapScreen.dart';
@@ -29,7 +29,7 @@ class _MyNavState extends State<PagesScreen> {
     return Scaffold(
       body: pages[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xff27273A),
+        backgroundColor: AppColors.appBarBackgroundColor,
         type: BottomNavigationBarType.fixed, // Ensure fixed type
         currentIndex: currentIndex,
         selectedItemColor: const Color(0xFF1463FF), // Active item color
@@ -47,7 +47,7 @@ class _MyNavState extends State<PagesScreen> {
         },
         items: [
           BottomNavigationBarItem(
-            label: "Home",
+            label: "",
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: SvgPicture.asset(
@@ -65,7 +65,7 @@ class _MyNavState extends State<PagesScreen> {
             ),
           ),
           BottomNavigationBarItem(
-            label: "Map",
+            label: "",
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: SvgPicture.asset(
@@ -83,7 +83,7 @@ class _MyNavState extends State<PagesScreen> {
             ),
           ),
           BottomNavigationBarItem(
-            label: "Chat",
+            label: "",
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: SvgPicture.asset(
@@ -101,7 +101,7 @@ class _MyNavState extends State<PagesScreen> {
             ),
           ),
           BottomNavigationBarItem(
-            label: "Profile",
+            label: "",
             activeIcon: Padding(
               padding: const EdgeInsets.only(top: 10),
               child: SvgPicture.asset(

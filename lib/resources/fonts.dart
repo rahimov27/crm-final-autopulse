@@ -30,4 +30,18 @@ abstract class AppFonts {
     fontWeight: FontWeight.w600,
     fontFamily: 'Montserrat',
   );
+
+  static const TextStyle profileTitleName = TextStyle(
+    fontSize: 16,
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'Montserrat',
+  );
+
+  static const TextStyle profileSubTitleName = TextStyle(
+    fontSize: 12,
+    color: Colors.grey,
+    fontWeight: FontWeight.w400,
+    fontFamily: 'Montserrat',
+  );
 }
