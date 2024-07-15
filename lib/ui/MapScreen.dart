@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:dio/dio.dart';
@@ -44,10 +43,10 @@ class _MapScreenState extends State<MapScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: fetchVehicleData,
-        child: Icon(Icons.search),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: fetchVehicleData,
+      //   child: Icon(Icons.search),
+      // ),
     );
   }
 
@@ -78,7 +77,7 @@ class _MapScreenState extends State<MapScreen> {
 
       if (response.statusCode == 200) {
         _accessToken = response.data['access_token'];
-        print('Access token: $_accessToken');
+        // print('Access token: $_accessToken');
         fetchVehicleData();
       } else {
         print(
@@ -118,7 +117,7 @@ class _MapScreenState extends State<MapScreen> {
       );
 
       if (response.statusCode == 200) {
-        print('Full response data: ${response.data}');
+        // print('Full response data: ${response.data}');
         final List<dynamic> responseBody = response.data;
         setState(() {
           _markers.clear();
@@ -127,7 +126,7 @@ class _MapScreenState extends State<MapScreen> {
                 vehicle['stats']['location'] != null) {
               carLat = vehicle['stats']['location']['lat'];
               carLon = vehicle['stats']['location']['lon'];
-              print('Car Lat: $carLat, Car Lon: $carLon');
+              // print('Car Lat: $carLat, Car Lon: $carLon');
 
               final marker = Marker(
                 markerId: MarkerId(vehicle['nickName']),
