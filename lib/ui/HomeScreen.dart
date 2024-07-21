@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:ui' as ui;
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -23,11 +25,13 @@ class _HomeScreenState extends State<HomeScreen> {
   String? imei;
   String? odometer;
   String? isRun;
+  int? ml;
 
   @override
   void initState() {
     super.initState();
     fetchAccessToken();
+    getCashData();
   }
 
   void _showCardModal(BuildContext context, String title, String content) {
@@ -77,9 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Expanded(
@@ -186,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         height: 145,
                                         width: 145,
                                         child: CircularProgressIndicator(
-                                          value: 0.75, // Represents 75%
+                                          value: 1.0, // Represents 75%
                                           strokeWidth: 20,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
@@ -194,8 +198,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                           backgroundColor: Colors.white12,
                                         ),
                                       ),
+                                      // Text(
+                                      //   "${odometer.toString()} mi",
+                                      //   style: AppFonts.milesText,
+                                      // ),
                                       Text(
-                                        "${odometer.toString()} mi",
+                                        "${ml.toString()} mi",
                                         style: AppFonts.milesText,
                                       ),
                                     ],
@@ -444,6 +452,40 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> saveData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Saving all necessary values
+    await prefs.setString('make', make ?? '');
+    await prefs.setString('name', name ?? '');
+    await prefs.setInt('year', year ?? 0);
+    await prefs.setString('vin', vin ?? '');
+    await prefs.setString('imei', imei ?? '');
+    await prefs.setString('odometer', odometer ?? '');
+    await prefs.setString('isRun', isRun ?? '');
+
+    // Verify the saved data
+    // print(
+    // 'Saved data: make: ${prefs.getString('make')}, name: ${prefs.getString('name')}, year: ${prefs.getInt('year')}, vin: ${prefs.getString('vin')}, imei: ${prefs.getString('imei')}, odometer: ${prefs.getString('odometer')}, isRun: ${prefs.getString('isRun')}');
+  }
+
+  Future<void> getCashData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      make = prefs.getString('make') ?? '';
+      name = prefs.getString('name') ?? '';
+      year = prefs.getInt('year') ?? 0;
+      vin = prefs.getString('vin') ?? '';
+      imei = prefs.getString('imei') ?? '';
+      odometer = prefs.getString('odometer') ?? '';
+      isRun = prefs.getString('isRun') ?? '';
+    });
+
+    // print(
+    // "Retrieved data from cache: make: $make, name: $name, year: $year, vin: $vin, imei: $imei, odometer: $odometer, isRun: $isRun");
+  }
+
   Future<void> fetchAccessToken() async {
     final url = 'https://auth.bouncie.com/oauth/token';
     final headers = {
@@ -471,7 +513,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (response.statusCode == 200) {
         _accessToken = response.data['access_token'];
-        // print('Access token: $_accessToken');
         fetchVehicleData();
       } else {
         print(
@@ -497,7 +538,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final url = 'https://api.bouncie.dev/v1/vehicles';
     final headers = {
-      'Authorization': '$_accessToken', // Added 'Bearer' for the token
+      'Authorization': '$_accessToken',
       'Accept': '*/*',
       'User-Agent': 'PostmanRuntime/7.40.0',
       'Connection': 'keep-alive',
@@ -515,12 +556,15 @@ class _HomeScreenState extends State<HomeScreen> {
           make = response.data[0]['model']['make'];
           name = response.data[0]['model']['name'];
           year = response.data[0]['model']['year'];
-          vin = response.data[0]["vin"];
-          imei = response.data[0]["imei"];
+          vin = response.data[0]['vin'];
+          imei = response.data[0]['imei'];
           odometer = response.data[0]['stats']['odometer'].toString();
           isRun = response.data[0]['stats']['isRunning'].toString();
           print(odometer);
         });
+
+        // Save data to SharedPreferences after fetching and setting state
+        saveData();
       } else {
         print(
             'Failed to fetch vehicle data. Status code: ${response.statusCode}');

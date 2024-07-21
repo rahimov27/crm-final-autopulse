@@ -44,4 +44,24 @@ abstract class AppFonts {
     fontWeight: FontWeight.w400,
     fontFamily: 'Montserrat',
   );
+
+  static const TextStyle loginTitle = TextStyle(
+      fontSize: 32,
+      color: Color(0xff1A1C1E),
+      fontWeight: FontWeight.bold,
+      fontFamily: 'Montserrat-Bold',
+      letterSpacing: -1.5);
+
+  static const TextStyle loginSubTitle = TextStyle(
+    fontSize: 12,
+    color: Color(0xff6C7278),
+    height: 1.5,
+    fontFamily: 'Montserrat',
+  );
+
+  static const TextStyle loginTextFieldTitle = TextStyle(
+    fontSize: 12,
+    color: Color(0xff6C7278),
+    fontFamily: 'Montserrat',
+  );
 }

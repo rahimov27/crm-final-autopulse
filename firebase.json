@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"ios":{"default":{"projectId":"autopulse-auth","appId":"1:62826115651:ios:b7e5f8fb65473d7f6b1af6","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"autopulse-auth","configurations":{"ios":"1:62826115651:ios:b7e5f8fb65473d7f6b1af6"}}}}}}
