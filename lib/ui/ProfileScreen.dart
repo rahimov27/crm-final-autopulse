@@ -1,12 +1,18 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:autopulse/welcome_screens/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:autopulse/resources/colors.dart';
 import 'package:autopulse/resources/fonts.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -14,11 +20,11 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
-  final String name = '';
   bool isFront = true;
-
   late AnimationController _controller;
   late Animation<double> _animation;
+  File? _selectedImage;
+  User? _user;
 
   @override
   void initState() {
@@ -28,12 +34,120 @@ class _ProfileScreenState extends State<ProfileScreen>
       vsync: this,
     );
     _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+    _loadImage();
+    fetchUser();
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  Future<void> fetchUser() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      setState(() {
+        _user = user;
+      });
+    } catch (e) {
+      debugPrint('Error fetching user: ${e.toString()}');
+    }
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final pickedFile =
+          await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final imageFile = File(pickedFile.path);
+        final imageName = pickedFile.name;
+
+        final localImage = await imageFile.copy('${directory.path}/$imageName');
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('profile_image_path', localImage.path);
+
+        if (mounted) {
+          setState(() {
+            _selectedImage = localImage;
+          });
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No image selected')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking image: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _loadImage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final imagePath = prefs.getString('profile_image_path');
+      if (imagePath != null) {
+        if (mounted) {
+          setState(() {
+            _selectedImage = File(imagePath);
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading image: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _removeImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('profile_image_path');
+
+    if (imagePath != null) {
+      final file = File(imagePath);
+      if (await file.exists()) {
+        await file.delete();
+      }
+      await prefs.remove('profile_image_path');
+
+      if (mounted) {
+        setState(() {
+          _selectedImage = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('profile_image_path');
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error signing out: ${e.toString()}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error signing out: $e')),
+        );
+      }
+    }
   }
 
   void _toggleCard() {
@@ -113,21 +227,28 @@ class _ProfileScreenState extends State<ProfileScreen>
               const SizedBox(height: 30),
               Row(
                 children: [
-                  const SizedBox(
+                  SizedBox(
                     height: 50,
                     width: 50,
-                    child: CircleAvatar(
-                      backgroundImage:
-                          AssetImage('assets/profile_icons/avatar.png'),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(100),
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        backgroundImage: _selectedImage != null
+                            ? Image.file(_selectedImage!).image
+                            : const AssetImage(
+                                    'assets/profile_icons/avatar.png')
+                                as ImageProvider,
+                      ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Jon Jones",
+                          _user?.email ?? "No email available",
                           style: AppFonts.profileTitleName,
                         ),
                         Text(
@@ -155,6 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
               const SizedBox(height: 40),
               Center(
                 child: Container(
@@ -229,7 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                           backgroundColor:
                                               AppColors.appBarBackgroundColor,
                                           minimumSize:
-                                              Size(double.infinity, 50),
+                                              const Size(double.infinity, 50),
                                         ),
                                         child: Text(
                                           "Back",
@@ -266,15 +388,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   height: 250,
                                   child: Column(
                                     children: [
-                                      Text(
-                                        "Business Hours:\nMonday - Friday: 9:00 AM - 6:00 PM\nSaturday: 10:00 AM - 4:00 PM             Sunday: Closed",
+                                      const Text(
+                                        "Business Hours:\nMonday - Friday: 9:00 AM - 6:00 PM\nSaturday: 10:00 AM - 4:00 PM\nSunday: Closed",
                                         style: AppFonts.chatText,
                                       ),
-                                      SizedBox(height: 20),
-                                      Text(
+                                      const SizedBox(height: 20),
+                                      const Text(
                                         "AutoPulse is dedicated to providing innovative solutions for automotive diagnostics and maintenance. Our state-of-the-art CRM system helps businesses manage customer relationships, streamline operations, and improve overall efficiency.",
                                         style: AppFonts.chatText,
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -307,17 +429,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                     borderRadius: BorderRadius.circular(10),
                     color: AppColors.widgetsColors,
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       children: [
                         ProfileRow(
                           title: "Delete Account",
                           image: "assets/profile_icons/user.svg",
                         ),
-                        ProfileRow(
+                        InkWell(
+                          onTap: _logout,
+                          child: ProfileRow(
                             title: "Logout",
-                            image: "assets/profile_icons/logout.svg"),
+                            image: "assets/profile_icons/logout.svg",
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -333,10 +459,11 @@ class _ProfileScreenState extends State<ProfileScreen>
 
 class ProfileRow extends StatelessWidget {
   const ProfileRow({
-    super.key,
+    Key? key,
     required this.title,
     required this.image,
-  });
+  }) : super(key: key);
+
   final String title;
   final String image;
 

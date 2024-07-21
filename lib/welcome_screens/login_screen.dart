@@ -14,15 +14,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  int? groupValue = 0; // 0 for Login, 1 for Register
+  int groupValue = 0; // 0 for Login, 1 for Register
   bool isChecked = false;
   bool _isLoading = false;
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _resendPassword = TextEditingController();
-  final TextEditingController _registerEmailController = TextEditingController();
-  final TextEditingController _registerPasswordController = TextEditingController();
+  final TextEditingController _registerEmailController =
+      TextEditingController();
+  final TextEditingController _registerPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,21 +37,15 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 33),
           child: Column(
             children: [
-              SvgPicture.asset(
-                'assets/logo.svg',
-                width: 60,
-              ),
-              Text(
-                "Autopulse",
-                style: AppFonts.loginTitle,
-              ),
+              SvgPicture.asset('assets/logo.svg', width: 60),
+              Text("Autopulse", style: AppFonts.loginTitle),
               Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: SizedBox(
                   width: 240,
                   child: Text(
-                    textAlign: TextAlign.center,
                     "Create an account or log in to explore our app",
+                    textAlign: TextAlign.center,
                     style: AppFonts.loginSubTitle,
                   ),
                 ),
@@ -69,335 +65,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: AppFonts.chatText
                             .copyWith(color: Colors.black, fontSize: 14)),
                   },
-                  onValueChanged: (groupValue) {
-                    setState(() => this.groupValue = groupValue);
-                  },
+                  onValueChanged: (value) =>
+                      setState(() => groupValue = value ?? 0),
                 ),
               ),
               if (groupValue == 0) ...[
-                // Login Form
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 24),
-                      child: TextFieldLogin(
-                        controller: _emailController,
-                        textFieldTitle: "Email",
-                        hintTextField: "example@gmail.com",
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: TextFieldPassword(
-                        controller: _passwordController,
-                        textFieldTitle: "Password",
-                        hintTextField: "Password",
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 24,
-                          child: Checkbox(
-                            value: isChecked,
-                            activeColor: Colors.grey,
-                            checkColor: Color.fromARGB(255, 255, 255, 255),
-                            onChanged: (newBool) {
-                              setState(() {
-                                isChecked = !isChecked;
-                              });
-                            },
-                          ),
-                        ),
-                        Text(
-                          "Remember me",
-                          style: AppFonts.loginTextFieldTitle,
-                        ),
-                        Spacer(),
-                        TextButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                backgroundColor: Colors.white,
-                                content: SizedBox(
-                                  height: 150,
-                                  child: Center(
-                                    child: Container(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          TextFieldLogin(
-                                            controller: _resendPassword,
-                                            textFieldTitle:
-                                                "Reset password by email",
-                                            hintTextField: "Enter email",
-                                          ),
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 10),
-                                            child: SizedBox(
-                                              width: double.infinity,
-                                              child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Color(0xff1D61E7),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                ),
-                                                onPressed: () async {
-                                                  bool isAuth =
-                                                      await FirebaseServices()
-                                                          .resendPassword(
-                                                              email:
-                                                                  _resendPassword
-                                                                      .text);
-                                                  if (isAuth) {
-                                                    Navigator.pop(context);
-                                                  } else {
-                                                    showCupertinoDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return CupertinoAlertDialog(
-                                                          title: Text("Error"),
-                                                          content: Text(
-                                                              "Please enter a valid email"),
-                                                          actions: [
-                                                            CupertinoDialogAction(
-                                                              child: Text(
-                                                                  "Cancel"),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                    _resendPassword.text = "";
-                                                  }
-                                                },
-                                                child: Text(
-                                                  "Reset password",
-                                                  style: AppFonts
-                                                      .loginTextFieldTitle
-                                                      .copyWith(
-                                                          color: Colors.white,
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "Forgot password?",
-                            style: AppFonts.loginTextFieldTitle
-                                .copyWith(color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 24),
-                    SizedBox(
-                      height: 48,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff1D61E7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () async {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          bool isAuthorized = await FirebaseServices()
-                              .authByEmail(
-                                  email: _emailController.text,
-                                  password: _passwordController.text);
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          if (isAuthorized) {
-                            // Save login status
-                            final SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.setBool('isLoggedIn', true);
-
-                            // Navigate to the main screen
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const PagesScreen()),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Incorrect email or password'),
-                              ),
-                            );
-                          }
-                        },
-                        child: _isLoading
-                            ? CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : Text(
-                                "Log In",
-                                style: AppFonts.loginTextFieldTitle.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account?",
-                          style: AppFonts.loginTextFieldTitle,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              groupValue = 1;
-                            });
-                          },
-                          child: Text(
-                            "Sign up",
-                            style: AppFonts.loginTextFieldTitle.copyWith(
-                                color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                _buildLoginForm(),
               ] else if (groupValue == 1) ...[
-                // Registration Form
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 24),
-                      child: TextFieldLogin(
-                        controller: _registerEmailController,
-                        textFieldTitle: "Email",
-                        hintTextField: "example@gmail.com",
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: TextFieldPassword(
-                        controller: _registerPasswordController,
-                        textFieldTitle: "Password",
-                        hintTextField: "Password",
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    SizedBox(
-                      height: 48,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xff1D61E7),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        onPressed: () async {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          bool isRegistered = await FirebaseServices()
-                              .registerByEmail(
-                                  email: _registerEmailController.text,
-                                  password: _registerPasswordController.text);
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          if (isRegistered) {
-                            // Save login status
-                            final SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.setBool('isLoggedIn', true);
-
-                            // Navigate to the main screen
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const PagesScreen()),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Registration failed'),
-                              ),
-                            );
-                          }
-                        },
-                        child: _isLoading
-                            ? CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : Text(
-                                "Register",
-                                style: AppFonts.loginTextFieldTitle.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Already have an account?",
-                          style: AppFonts.loginTextFieldTitle,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              groupValue = 0;
-                            });
-                          },
-                          child: Text(
-                            "Log In",
-                            style: AppFonts.loginTextFieldTitle.copyWith(
-                                color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                _buildRegisterForm(),
               ],
             ],
           ),
@@ -405,8 +80,259 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-}
 
+  Widget _buildLoginForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 24),
+          child: TextFieldLogin(
+            controller: _emailController,
+            textFieldTitle: "Email",
+            hintTextField: "example@gmail.com",
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: TextFieldPassword(
+            controller: _passwordController,
+            textFieldTitle: "Password",
+            hintTextField: "Password",
+          ),
+        ),
+        Row(
+          children: [
+            SizedBox(
+              width: 24,
+              child: Checkbox(
+                value: isChecked,
+                activeColor: Colors.grey,
+                checkColor: Colors.white,
+                onChanged: (value) =>
+                    setState(() => isChecked = value ?? false),
+              ),
+            ),
+            Text("Remember me", style: AppFonts.loginTextFieldTitle),
+            Spacer(),
+            TextButton(
+              onPressed: () => _showResetPasswordDialog(),
+              child: Text("Forgot password?",
+                  style: AppFonts.loginTextFieldTitle
+                      .copyWith(color: Colors.blue)),
+            ),
+          ],
+        ),
+        SizedBox(height: 24),
+        SizedBox(
+          height: 48,
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xff1D61E7),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: _isLoading ? null : _login,
+            child: _isLoading
+                ? CircularProgressIndicator(color: Colors.white)
+                : Text("Log In",
+                    style: AppFonts.loginTextFieldTitle.copyWith(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600)),
+          ),
+        ),
+        SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Don't have an account?", style: AppFonts.loginTextFieldTitle),
+            TextButton(
+              onPressed: () => setState(() => groupValue = 1),
+              child: Text("Sign up",
+                  style: AppFonts.loginTextFieldTitle
+                      .copyWith(color: Colors.blue)),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRegisterForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 24),
+          child: TextFieldLogin(
+            controller: _registerEmailController,
+            textFieldTitle: "Email",
+            hintTextField: "example@gmail.com",
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: TextFieldPassword(
+            controller: _registerPasswordController,
+            textFieldTitle: "Password",
+            hintTextField: "Password",
+          ),
+        ),
+        SizedBox(height: 24),
+        SizedBox(
+          height: 48,
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xff1D61E7),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: _isLoading ? null : _register,
+            child: _isLoading
+                ? CircularProgressIndicator(color: Colors.white)
+                : Text("Register",
+                    style: AppFonts.loginTextFieldTitle.copyWith(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600)),
+          ),
+        ),
+        SizedBox(height: 24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Already have an account?",
+                style: AppFonts.loginTextFieldTitle),
+            TextButton(
+              onPressed: () => setState(() => groupValue = 0),
+              child: Text("Log In",
+                  style: AppFonts.loginTextFieldTitle
+                      .copyWith(color: Colors.blue)),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _showResetPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        content: SizedBox(
+          height: 150,
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFieldLogin(
+                  controller: _resendPassword,
+                  textFieldTitle: "Reset password by email",
+                  hintTextField: "Enter email",
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xff1D61E7),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                      onPressed: _resetPassword,
+                      child: Text("Reset password",
+                          style: AppFonts.loginTextFieldTitle.copyWith(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+    bool isAuthorized = await FirebaseServices().authByEmail(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    setState(() {
+      _isLoading = false;
+    });
+    if (isAuthorized) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const PagesScreen()));
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Incorrect email or password')));
+    }
+  }
+
+  Future<void> _register() async {
+    setState(() {
+      _isLoading = true;
+    });
+    bool isRegistered = await FirebaseServices().registerByEmail(
+      email: _registerEmailController.text,
+      password: _registerPasswordController.text,
+    );
+    setState(() {
+      _isLoading = false;
+    });
+    if (isRegistered) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const PagesScreen()));
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Registration failed')));
+    }
+  }
+
+  Future<void> _resetPassword() async {
+    bool isAuth =
+        await FirebaseServices().resendPassword(email: _resendPassword.text);
+    if (isAuth) {
+      Navigator.pop(context);
+    } else {
+      showCupertinoDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text("Error"),
+            content: Text("Please enter a valid email"),
+            actions: [
+              CupertinoDialogAction(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      _resendPassword.text = "";
+    }
+  }
+}
 
 class socialContainer extends StatelessWidget {
   const socialContainer({super.key, required this.imagePath});

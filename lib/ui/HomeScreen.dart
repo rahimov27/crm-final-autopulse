@@ -83,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Expanded(
@@ -190,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         height: 145,
                                         width: 145,
                                         child: CircularProgressIndicator(
-                                          value: 1.0, // Represents 75%
+                                          value: 0.72, // Represents 75%
                                           strokeWidth: 20,
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
@@ -198,14 +197,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                           backgroundColor: Colors.white12,
                                         ),
                                       ),
-                                      // Text(
-                                      //   "${odometer.toString()} mi",
-                                      //   style: AppFonts.milesText,
-                                      // ),
                                       Text(
-                                        "${ml.toString()} mi",
+                                        "${odometer.toString()} mi",
                                         style: AppFonts.milesText,
                                       ),
+                                      // Text(
+                                      //   "${ml.toString()} mi",
+                                      //   style: AppFonts.milesText,
+                                      // ),
                                     ],
                                   ),
                                 ),
