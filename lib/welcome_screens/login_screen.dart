@@ -1,9 +1,10 @@
 import 'package:autopulse/auth/firebase_services.dart';
 import 'package:autopulse/resources/fonts.dart';
 import 'package:autopulse/ui/PagesScreen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,6 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _resendPassword = TextEditingController();
+  final TextEditingController _registerEmailController = TextEditingController();
+  final TextEditingController _registerPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: 240,
                   child: Text(
                     textAlign: TextAlign.center,
-                    "Create an account or log in to explore about our app",
+                    "Create an account or log in to explore our app",
                     style: AppFonts.loginSubTitle,
                   ),
                 ),
@@ -238,48 +241,30 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             _isLoading = false;
                           });
-                          if (isAuthorized == true) {
-                            Navigator.pushAndRemoveUntil(
+                          if (isAuthorized) {
+                            // Save login status
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setBool('isLoggedIn', true);
+
+                            // Navigate to the main screen
+                            Navigator.pushReplacement(
                               context,
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        PagesScreen(),
-                                transitionsBuilder: (context, animation,
-                                    secondaryAnimation, child) {
-                                  return child;
-                                },
-                                transitionDuration: Duration
-                                    .zero, // Make the transition instant
-                              ),
-                              (Route<dynamic> route) => false,
+                              MaterialPageRoute(
+                                  builder: (context) => const PagesScreen()),
                             );
-                            print("isAuthorized");
                           } else {
-                            showCupertinoDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CupertinoAlertDialog(
-                                  title: Text("Error"),
-                                  content: Text("Please enter a valid email"),
-                                  actions: [
-                                    CupertinoDialogAction(
-                                      child: Text("Cancel"),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Incorrect email or password'),
+                              ),
                             );
-                            _resendPassword.text = "";
                           }
-                          _emailController.text = "";
-                          _passwordController.text = "";
                         },
                         child: _isLoading
-                            ? CupertinoActivityIndicator()
+                            ? CircularProgressIndicator(
+                                color: Colors.white,
+                              )
                             : Text(
                                 "Log In",
                                 style: AppFonts.loginTextFieldTitle.copyWith(
@@ -288,17 +273,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontWeight: FontWeight.w600),
                               ),
                       ),
-                    )
+                    ),
+                    SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account?",
+                          style: AppFonts.loginTextFieldTitle,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              groupValue = 1;
+                            });
+                          },
+                          child: Text(
+                            "Sign up",
+                            style: AppFonts.loginTextFieldTitle.copyWith(
+                                color: Colors.blue),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ] else if (groupValue == 1) ...[
+                // Registration Form
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 24),
                       child: TextFieldLogin(
-                        controller: _emailController,
+                        controller: _registerEmailController,
                         textFieldTitle: "Email",
                         hintTextField: "example@gmail.com",
                       ),
@@ -306,7 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16),
                       child: TextFieldPassword(
-                        controller: _passwordController,
+                        controller: _registerPasswordController,
                         textFieldTitle: "Password",
                         hintTextField: "Password",
                       ),
@@ -326,40 +334,37 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             _isLoading = true;
                           });
-                          bool isAuth = await FirebaseServices().registration(
-                              email: _emailController.text,
-                              password: _passwordController.text);
+                          bool isRegistered = await FirebaseServices()
+                              .registerByEmail(
+                                  email: _registerEmailController.text,
+                                  password: _registerPasswordController.text);
                           setState(() {
                             _isLoading = false;
                           });
-                          if (isAuth) {
-                            print("You registered successfully");
-                          } else {
-                            showCupertinoDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CupertinoAlertDialog(
-                                  title: Text("Error"),
-                                  content: Text(
-                                      "Please enter valid password and email"),
-                                  actions: [
-                                    CupertinoDialogAction(
-                                      child: Text("Cancel"),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
+                          if (isRegistered) {
+                            // Save login status
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setBool('isLoggedIn', true);
+
+                            // Navigate to the main screen
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const PagesScreen()),
                             );
-                            _resendPassword.text = "";
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Registration failed'),
+                              ),
+                            );
                           }
-                          _emailController.text = "";
-                          _passwordController.text = "";
                         },
                         child: _isLoading
-                            ? CupertinoActivityIndicator()
+                            ? CircularProgressIndicator(
+                                color: Colors.white,
+                              )
                             : Text(
                                 "Register",
                                 style: AppFonts.loginTextFieldTitle.copyWith(
@@ -368,66 +373,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontWeight: FontWeight.w600),
                               ),
                       ),
-                    )
+                    ),
+                    SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account?",
+                          style: AppFonts.loginTextFieldTitle,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              groupValue = 0;
+                            });
+                          },
+                          child: Text(
+                            "Log In",
+                            style: AppFonts.loginTextFieldTitle.copyWith(
+                                color: Colors.blue),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
-              SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 109,
-                    color: Color(0xffEDF1F3),
-                    height: 1,
-                  ),
-                  Text(
-                    "Or login with",
-                    style: AppFonts.loginTextFieldTitle,
-                  ),
-                  Container(
-                    width: 109,
-                    color: Color(0xffEDF1F3),
-                    height: 1,
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  InkWell(
-                    borderRadius: BorderRadius.circular(5),
-                    splashColor: Color(0xff1D61E7),
-                    onTap: () async {
-                      bool isAuth = await FirebaseServices().authByGoogle();
-                      if (isAuth) {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PagesScreen()),
-                          (Route<dynamic> route) => false,
-                        );
-                        print("Auth by google successfully");
-                      } else {
-                        print("Error with google auth");
-                      }
-                    },
-                    child: socialContainer(
-                      imagePath: "assets/google.svg",
-                    ),
-                  ),
-                  socialContainer(
-                    imagePath: "assets/facebook.svg",
-                  ),
-                  socialContainer(
-                    imagePath: "assets/apple-id.svg",
-                  ),
-                  socialContainer(
-                    imagePath: "assets/phone.svg",
-                  ),
-                ],
-              )
             ],
           ),
         ),
@@ -436,10 +407,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
+
 class socialContainer extends StatelessWidget {
   const socialContainer({super.key, required this.imagePath});
 
   final String imagePath;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -568,11 +541,9 @@ class _TextFieldPasswordState extends State<TextFieldPassword> {
                   color: Color.fromARGB(255, 173, 173, 173),
                 ),
                 onPressed: () {
-                  setState(
-                    () {
-                      _obscureText = !_obscureText;
-                    },
-                  );
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
                 },
               ),
             ),

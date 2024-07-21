@@ -1,4 +1,4 @@
-import 'package:autopulse/ui/PagesScreen.dart';
+import 'package:autopulse/welcome_screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => const PagesScreen(),
+          pageBuilder: (context, animation1, animation2) => const LoginScreen(),
           transitionDuration: const Duration(milliseconds: 300),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(

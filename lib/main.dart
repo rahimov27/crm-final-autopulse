@@ -1,27 +1,39 @@
 import 'package:autopulse/resources/colors.dart';
+import 'package:autopulse/ui/PagesScreen.dart';
 import 'package:autopulse/welcome_screens/login_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  // Check if the user is already logged in
+  final bool isLoggedIn = await _checkLoginStatus();
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
+}
+
+Future<bool> _checkLoginStatus() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // Check if 'isLoggedIn' flag exists and is set to true
+  return prefs.getBool('isLoggedIn') ?? false;
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
-   
     return MaterialApp(
-      // home: const SplashScreen(),
-      home: LoginScreen(),
+      home: isLoggedIn ? const PagesScreen() : const LoginScreen(),
       theme: ThemeData(
         cupertinoOverrideTheme:
             CupertinoThemeData().copyWith(primaryColor: Colors.blue[400]),
@@ -33,7 +45,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.backgroundColor,
         primarySwatch: Colors.blue,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent, // Your custom color
+          backgroundColor: Colors.transparent,
           iconTheme: IconThemeData(color: Colors.white),
           titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
         ),
