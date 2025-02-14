@@ -1,16 +1,34 @@
-# autopulse
+# 🚗 AutoPulse – Real-time Vehicle Monitoring System  
 
-A new Flutter project.
+**AutoPulse** is a Flutter-based mobile application designed to track vehicle location in real time and provide detailed information about the vehicle's condition, including fuel level, oil status, and more.  
 
-## Getting Started
+🔹 This project was fully designed and developed by me, including UX/UI, development, and deployment.  
 
-This project is a starting point for a Flutter application.
+## ✨ Key Features  
 
-A few resources to get you started if this is your first Flutter project:
+- 📍 **Real-time GPS Tracking** – Monitor vehicle location with live updates.  
+- ⛽ **Fuel Level Monitoring** – Keep track of fuel consumption and refueling history.  
+- 🛢 **Oil Status Monitoring** – Get alerts on oil level and required maintenance.  
+- 🔧 **Vehicle Diagnostics** – Receive information about engine performance, errors, and other key parameters.  
+- 📊 **Detailed Reports** – Analyze vehicle usage, fuel efficiency, and maintenance schedules.  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# 🚗 AutoPulse – Система мониторинга автомобилей в реальном времени  
+
+**AutoPulse** – это мобильное приложение на Flutter, предназначенное для отслеживания местоположения автомобиля в режиме реального времени и мониторинга его технического состояния, включая уровень топлива, масла и другие параметры.  
+
+🔹 Весь UX/UI-дизайн, разработку и развертывание системы я выполнял самостоятельно.  
+
+## ✨ Основные функции  
+
+- 📍 **GPS-трекер в реальном времени** – мониторинг местоположения автомобиля с живыми обновлениями.  
+- ⛽ **Контроль уровня топлива** – отслеживание расхода топлива и истории заправок.  
+- 🛢 **Мониторинг состояния масла** – уведомления об уровне масла и необходимости замены.  
+- 🔧 **Диагностика автомобиля** – получение информации о состоянии двигателя, ошибках и других параметрах.  
+- 📊 **Подробная аналитика** – отчёты об использовании автомобиля, расходе топлива и плановом обслуживании.  
+
+## 📸 Screenshots  
+
+
+
